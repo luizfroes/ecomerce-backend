@@ -2,7 +2,7 @@
 const { Model, DataTypes, ConnectionError } = require("sequelize");
 
 // import our database connection from config.js
-const connection = require("./config/connection");
+const connection = require("../config/connection");
 
 // Initialize Product model (table) by extending off Sequelize's Model class
 class Category extends Model {}
