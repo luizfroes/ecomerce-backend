@@ -26,7 +26,7 @@ Product.belongsToMany(Tag, {
     unique: false,
   },
   foreignKey: {
-    name: "tagId",
+    name: "productId",
   },
 });
 
@@ -37,7 +37,7 @@ Tag.belongsToMany(Product, {
     unique: false,
   },
   foreignKey: {
-    name: "productId",
+    name: "tagId",
   },
 });
 
