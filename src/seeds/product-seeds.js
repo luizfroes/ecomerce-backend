@@ -8,7 +8,7 @@ const productData = [
     categoryId: 1,
   },
   {
-    productName: "Pink Boucle Shirt",
+    productName: "Red Boucle Shirt",
     price: 16.99,
     stock: 24,
     categoryId: 1,
@@ -20,13 +20,13 @@ const productData = [
     categoryId: 1,
   },
   {
-    productName: "Black Satin Solid Shirt",
+    productName: "Blue Satin Solid Shirt",
     price: 7.99,
     stock: 11,
     categoryId: 1,
   },
   {
-    productName: "Grey Stronghold Print T-Shirt",
+    productName: "Green Stronghold Print T-Shirt",
     price: 8.99,
     stock: 12,
     categoryId: 1,
@@ -38,7 +38,7 @@ const productData = [
     categoryId: 5,
   },
   {
-    productName: "Black Studded Ballerina Shoes",
+    productName: "Blue Studded Ballerina Shoes",
     price: 9.0,
     stock: 28,
     categoryId: 5,
@@ -56,7 +56,7 @@ const productData = [
     categoryId: 5,
   },
   {
-    productName: "Black Chelsea Boots",
+    productName: "Red Chelsea Boots",
     price: 30.0,
     stock: 35,
     categoryId: 5,
@@ -80,7 +80,7 @@ const productData = [
     categoryId: 4,
   },
   {
-    productName: "Grey Herringbone Pattern Flat Cap",
+    productName: "Red Herringbone Pattern Flat Cap",
     price: 5.99,
     stock: 16,
     categoryId: 4,
@@ -140,19 +140,19 @@ const productData = [
     categoryId: 2,
   },
   {
-    productName: "Beige Relaxed Belted Shorts",
+    productName: "Red Relaxed Belted Shorts",
     price: 10.99,
     stock: 8,
     categoryId: 2,
   },
   {
-    productName: "Grey Cable Knit Shorts",
+    productName: "Blue Cable Knit Shorts",
     price: 9.99,
     stock: 21,
     categoryId: 2,
   },
   {
-    productName: "Teal Satin Mesh Premium Lingerie Set",
+    productName: "Golden Satin Mesh Premium Lingerie Set",
     price: 7.0,
     stock: 14,
     categoryId: 6,
@@ -170,7 +170,7 @@ const productData = [
     categoryId: 6,
   },
   {
-    productName: "Black Maximise Underwired Bra",
+    productName: "Blue Maximise Underwired Bra",
     price: 12.99,
     stock: 8,
     categoryId: 6,
@@ -212,7 +212,7 @@ const productData = [
     categoryId: 7,
   },
   {
-    productName: "Younger Girl Grey Disney Princess Sweater",
+    productName: "Younger Girl Green Disney Princess Sweater",
     price: 4.99,
     stock: 24,
     categoryId: 7,
