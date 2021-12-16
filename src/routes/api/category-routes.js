@@ -1,12 +1,12 @@
 const { Router } = require("express");
 
 const {
-  getAllCategories,
-  getCategoryById,
-  createNewCategory,
-  updateCategoryById,
   deleteCategoryById,
-} = require("../../controllers/category");
+  updateCategoryById,
+  createNewCategory,
+  getCategoryById,
+  getAllCategories,
+} = require("../../controllers/api/category");
 
 const { Category, Product } = require("../../models");
 

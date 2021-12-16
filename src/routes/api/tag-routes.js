@@ -6,7 +6,7 @@ const {
   createNewTag,
   updateTagById,
   deleteTagById,
-} = require("../../controllers/tag");
+} = require("../../controllers/api/tag");
 
 const { Tag, Product, ProductTag } = require("../../models");
 

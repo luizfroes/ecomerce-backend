@@ -1,27 +1,27 @@
 const getAllCategories = (req, res) => {
-  "getAllCategories";
+  res.send("getAllCategories");
   // find all categories
   // be sure to include its associated Products
 };
 
 const getCategoryById = (req, res) => {
-  "getCategoryById";
+  res.send("getCategoryById");
   // find one category by its `id` value
   // be sure to include its associated Products
 };
 
 const createNewCategory = (req, res) => {
-  "createNewCategory";
+  res.send("createNewCategory");
   // create a new category
 };
 
 const updateCategoryById = (req, res) => {
-  "updateCategoryById";
+  res.send("updateCategoryById");
   // update a category by its `id` value
 };
 
 const deleteCategoryById = (req, res) => {
-  "deleteCategoryById";
+  res.send("deleteCategoryById");
   // delete a category by its `id` value
 };
 

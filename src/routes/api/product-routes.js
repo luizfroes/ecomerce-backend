@@ -6,7 +6,7 @@ const {
   createNewProduct,
   updateProductById,
   deleteProductById,
-} = require("../../controllers/product");
+} = require("../../controllers/api/product");
 
 const { Product, Category, Tag, ProductTag } = require("../../models");
 

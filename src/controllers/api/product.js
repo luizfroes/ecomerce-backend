@@ -1,17 +1,17 @@
 const getAllProducts = (req, res) => {
-  "getAllProducts";
+  res.send("getAllProducts");
   // find all products
   // be sure to include its associated Category and Tag data
 };
 
 const getProductById = (req, res) => {
-  "getProductById";
+  res.send("getProductById");
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
 };
 
 const createNewProduct = (req, res) => {
-  "createNewProduct";
+  res.send("createNewProduct");
   /* req.body should look like this...
     {
       product_name: "Basketball",
@@ -43,7 +43,7 @@ const createNewProduct = (req, res) => {
 };
 
 const updateProductById = (req, res) => {
-  "updateProductById";
+  res.send("updateProductById");
   // update product data
   Product.update(req.body, {
     where: {
@@ -85,7 +85,7 @@ const updateProductById = (req, res) => {
 };
 
 const deleteProductById = (req, res) => {
-  "deleteCategoryById";
+  res.send("deleteProductById");
   // delete one product by its `id` value
 };
 

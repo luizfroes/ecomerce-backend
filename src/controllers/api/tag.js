@@ -1,27 +1,27 @@
 const getAllTags = (req, res) => {
-  "getAllCategories";
+  res.send("getAllTags");
   // find all tags
   // be sure to include its associated Product data
 };
 
 const getTagById = (req, res) => {
-  "getCategoryById";
+  res.send("getTagById");
   // find a single tag by its `id`
   // be sure to include its associated Product data
 };
 
 const createNewTag = (req, res) => {
-  "createNewCategory";
+  res.send("createNewTag");
   // create a new tag
 };
 
 const updateTagById = (req, res) => {
-  "updateCategoryById";
+  res.send("updateTagById");
   // update a tag's name by its `id` value
 };
 
 const deleteTagById = (req, res) => {
-  "deleteCategoryById";
+  res.send("deleteTagById");
   // delete on tag by its `id` value
 };
 
