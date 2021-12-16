@@ -46,7 +46,7 @@ Product.init(
     timestamps: false,
     freezeTableName: true,
     underscored: false,
-    modelName: "product",
+    modelName: "Product",
   }
 );
 

@@ -18,14 +18,14 @@ Tag.init(
     },
     tagName: {
       type: DataTypes.STRING,
-    }
+    },
   },
   {
     sequelize: connection,
     timestamps: false,
     freezeTableName: true,
     underscored: false,
-    modelName: "tag",
+    modelName: "Tag",
   }
 );
 
