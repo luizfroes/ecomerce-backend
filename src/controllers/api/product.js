@@ -1,13 +1,49 @@
-const getAllProducts = (req, res) => {
-  res.send("getAllProducts");
-  // find all products
-  // be sure to include its associated Category and Tag data
+const { logError } = require("../../utils/logger");
+
+const { Category, Product, Tag } = require("../../models");
+
+const getAllProducts = async (req, res) => {
+  try {
+    // find all products
+    const data = await Product.findAll({
+      include: [
+        {
+          model: Category,
+        },
+        {
+          model: Tag,
+        },
+      ],
+    });
+    return res.json({ success: true, data });
+  } catch (error) {
+    logError("GET Categories", error.message);
+    return res
+      .status(500)
+      .json({ success: false, error: "Failed to send response" });
+  }
 };
 
-const getProductById = (req, res) => {
-  res.send("getProductById");
-  // find a single product by its `id`
-  // be sure to include its associated Category and Tag data
+const getProductById = async (req, res) => {
+  try {
+    // find a single product by its `id`
+    const data = await Product.findByPk(req.params.id, {
+      include: [
+        {
+          model: Category,
+        },
+        {
+          model: Tag,
+        },
+      ],
+    });
+    return res.json({ success: true, data });
+  } catch (error) {
+    logError("GET Category by ID", error.message);
+    return res
+      .status(500)
+      .json({ success: false, error: "Failed to send response" });
+  }
 };
 
 const createNewProduct = (req, res) => {
