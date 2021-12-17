@@ -1,6 +1,6 @@
 const { logError } = require("../../utils/logger");
 
-const { Category, Product, Tag } = require("../../models");
+const { Category, Product, Tag, ProductTag } = require("../../models");
 
 const getAllProducts = async (req, res) => {
   try {
@@ -56,20 +56,20 @@ const getProductById = async (req, res) => {
 const createNewProduct = async (req, res) => {
   try {
     // create a new Product
-    const { productName, price, stock, categoryId, tagsId } = req.body;
+    const { productName, price, stock, categoryId, tagIds } = req.body;
 
-    if (productName && price && stock && categoryId && tagsId) {
-      Product.create({ productName, price, stock, categoryId, tagsId })
+    if (productName && price && stock && categoryId) {
+      await Product.create({ productName, price, stock, categoryId, tagIds })
         .then((product) => {
-          console.log(product);
           // if there's product tags, we need to create pairings to bulk create in the ProductTag model
-          if (tagsId.length) {
-            const productTagIdArr = tagsId.map((tagId) => {
+          if (tagIds.length) {
+            const productTagIdArr = tagIds.map((tagId) => {
               return {
                 productId: product.id,
                 tagId,
               };
             });
+
             return ProductTag.bulkCreate(productTagIdArr);
           }
           // if no product tags, just respond
