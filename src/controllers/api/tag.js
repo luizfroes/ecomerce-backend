@@ -31,7 +31,14 @@ const getTagById = async (req, res) => {
         },
       ],
     });
-    return res.json({ success: true, data });
+
+    if (data) {
+      return res.json({ success: true, data });
+    }
+
+    return res
+      .status(404)
+      .json({ success: false, error: "Category does not exist" });
   } catch (error) {
     logError("GET Tag by ID", error.message);
     return res
@@ -40,9 +47,25 @@ const getTagById = async (req, res) => {
   }
 };
 
-const createNewTag = (req, res) => {
-  res.send("createNewTag");
-  // create a new tag
+const createNewTag = async (req, res) => {
+  try {
+    // create a new tag
+    const { tagName } = req.body;
+
+    if (tagName) {
+      await Tag.create({ tagName });
+      return res.json({ success: true, data: "Created Tag" });
+    }
+
+    return res
+      .status(400)
+      .json({ success: false, error: "Please provide the Tag name" });
+  } catch (error) {
+    logError("POST Tag", error.message);
+    return res
+      .status(500)
+      .json({ success: false, error: "Failed to send response" });
+  }
 };
 
 const updateTagById = (req, res) => {
