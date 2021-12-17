@@ -17,7 +17,7 @@ const getAllProducts = async (req, res) => {
     });
     return res.json({ success: true, data });
   } catch (error) {
-    logError("GET Categories", error.message);
+    logError("GET Products", error.message);
     return res
       .status(500)
       .json({ success: false, error: "Failed to send response" });
@@ -39,7 +39,7 @@ const getProductById = async (req, res) => {
     });
     return res.json({ success: true, data });
   } catch (error) {
-    logError("GET Category by ID", error.message);
+    logError("GET Product by ID", error.message);
     return res
       .status(500)
       .json({ success: false, error: "Failed to send response" });

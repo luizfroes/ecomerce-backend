@@ -14,7 +14,7 @@ const getAllTags = async (req, res) => {
     });
     return res.json({ success: true, data });
   } catch (error) {
-    logError("GET Categories", error.message);
+    logError("GET Tags", error.message);
     return res
       .status(500)
       .json({ success: false, error: "Failed to send response" });
@@ -33,7 +33,7 @@ const getTagById = async (req, res) => {
     });
     return res.json({ success: true, data });
   } catch (error) {
-    logError("GET Category by ID", error.message);
+    logError("GET Tag by ID", error.message);
     return res
       .status(500)
       .json({ success: false, error: "Failed to send response" });
