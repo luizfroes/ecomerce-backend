@@ -37,7 +37,14 @@ const getProductById = async (req, res) => {
         },
       ],
     });
-    return res.json({ success: true, data });
+
+    if (data) {
+      return res.json({ success: true, data });
+    }
+
+    return res
+      .status(404)
+      .json({ success: false, error: "Category does not exist" });
   } catch (error) {
     logError("GET Product by ID", error.message);
     return res
@@ -46,36 +53,43 @@ const getProductById = async (req, res) => {
   }
 };
 
-const createNewProduct = (req, res) => {
-  res.send("createNewProduct");
-  /* req.body should look like this...
-    {
-      product_name: "Basketball",
-      price: 200.00,
-      stock: 3,
-      tagIds: [1, 2, 3, 4]
+const createNewProduct = async (req, res) => {
+  try {
+    // create a new Product
+    const { productName, price, stock, categoryId, tagsId } = req.body;
+
+    if (productName && price && stock && categoryId && tagsId) {
+      Product.create({ productName, price, stock, categoryId, tagsId })
+        .then((product) => {
+          console.log(product);
+          // if there's product tags, we need to create pairings to bulk create in the ProductTag model
+          if (tagsId.length) {
+            const productTagIdArr = tagsId.map((tagId) => {
+              return {
+                productId: product.id,
+                tagId,
+              };
+            });
+            return ProductTag.bulkCreate(productTagIdArr);
+          }
+          // if no product tags, just respond
+          res.status(200).json(product);
+        })
+        .then((productTagIds) => res.status(200).json(productTagIds));
+
+      return res.json({ success: true, data: "Created Product" });
     }
-  */
-  Product.create(req.body)
-    .then((product) => {
-      // if there's product tags, we need to create pairings to bulk create in the ProductTag model
-      if (req.body.tagIds.length) {
-        const productTagIdArr = req.body.tagIds.map((tag_id) => {
-          return {
-            product_id: product.id,
-            tag_id,
-          };
-        });
-        return ProductTag.bulkCreate(productTagIdArr);
-      }
-      // if no product tags, just respond
-      res.status(200).json(product);
-    })
-    .then((productTagIds) => res.status(200).json(productTagIds))
-    .catch((err) => {
-      console.log(err);
-      res.status(400).json(err);
+
+    return res.status(400).json({
+      success: false,
+      error: "Please read the documentation to find the required fields",
     });
+  } catch (error) {
+    logError("POST Product", error.message);
+    return res
+      .status(500)
+      .json({ success: false, error: "Failed to send response" });
+  }
 };
 
 const updateProductById = (req, res) => {
@@ -120,9 +134,28 @@ const updateProductById = (req, res) => {
     });
 };
 
-const deleteProductById = (req, res) => {
-  res.send("deleteProductById");
-  // delete one product by its `id` value
+const deleteProductById = async (req, res) => {
+  try {
+    // delete one product by its `id` value
+    const data = await Product.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (data) {
+      return res.json({ success: true, data: "Deleted Product" });
+    }
+
+    return res
+      .status(404)
+      .json({ success: false, error: "Product does not exist" });
+  } catch (error) {
+    logError("DELETE Product", error.message);
+    return res
+      .status(500)
+      .json({ success: false, error: "Failed to send response" });
+  }
 };
 
 module.exports = {

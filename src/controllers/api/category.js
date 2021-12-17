@@ -79,15 +79,28 @@ const updateCategoryById = (req, res) => {
   // update a category by its `id` value
 };
 
-const deleteCategoryById = (req, res) => {
+const deleteCategoryById = async (req, res) => {
   try {
+    // delete a category by its `id` value
+    const data = await Category.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (data) {
+      return res.json({ success: true, data: "Deleted Category" });
+    }
+
+    return res
+      .status(404)
+      .json({ success: false, error: "Category does not exist" });
   } catch (error) {
-    logError("  DELETE Category", error.message);
+    logError("DELETE Category", error.message);
     return res
       .status(500)
       .json({ success: false, error: "Failed to send response" });
   }
-  // delete a category by its `id` value
 };
 
 module.exports = {

@@ -38,7 +38,7 @@ const getTagById = async (req, res) => {
 
     return res
       .status(404)
-      .json({ success: false, error: "Category does not exist" });
+      .json({ success: false, error: "Tag does not exist" });
   } catch (error) {
     logError("GET Tag by ID", error.message);
     return res
@@ -73,9 +73,28 @@ const updateTagById = (req, res) => {
   // update a tag's name by its `id` value
 };
 
-const deleteTagById = (req, res) => {
-  res.send("deleteTagById");
-  // delete on tag by its `id` value
+const deleteTagById = async (req, res) => {
+  try {
+    // delete on tag by its `id` value
+    const data = await Tag.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (data) {
+      return res.json({ success: true, data: "Deleted Tag" });
+    }
+
+    return res
+      .status(404)
+      .json({ success: false, error: "Tag does not exist" });
+  } catch (error) {
+    logError("  DELETE Tag", error.message);
+    return res
+      .status(500)
+      .json({ success: false, error: "Failed to send response" });
+  }
 };
 
 module.exports = {
