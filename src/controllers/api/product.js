@@ -86,11 +86,9 @@ const createNewProduct = async (req, res) => {
           return ProductTag.bulkCreate(productTagIdArr);
         }
         // if no product tags, just respond
-        return res.json({ product, success: true, data: "Created Product" });
+        res.json({ product, success: true, data: "Created Product" });
       })
-      .then((productTagIds) =>
-        res.json({ productTagIds, success: true, data: "Created Product tags" })
-      );
+      .then((productTagIds) => res.json({ productTagIds }));
   } catch (error) {
     logError("POST Product", error.message);
     return res
