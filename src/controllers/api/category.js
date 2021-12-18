@@ -99,13 +99,14 @@ const deleteCategoryById = async (req, res) => {
         id: req.params.id,
       },
     });
-    if (data) {
-      return res.json({ success: true, data: "Deleted Category" });
+    console.log(data);
+    if (!data) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Category does not exist" });
     }
 
-    return res
-      .status(404)
-      .json({ success: false, error: "Category does not exist" });
+    return res.json({ success: true, data: "Deleted Category" });
   } catch (error) {
     logError("DELETE Category", error.message);
     return res
