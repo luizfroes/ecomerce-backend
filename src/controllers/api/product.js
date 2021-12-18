@@ -1,6 +1,7 @@
 const { logError } = require("../../utils/logger");
 
 const { Category, Product, Tag, ProductTag } = require("../../models");
+const { isValidProduct, isValidUpdate } = require("../../utils/helpers");
 
 const getAllProducts = async (req, res) => {
   try {
@@ -44,7 +45,7 @@ const getProductById = async (req, res) => {
 
     return res
       .status(404)
-      .json({ success: false, error: "Category does not exist" });
+      .json({ success: false, error: "Product does not exist" });
   } catch (error) {
     logError("GET Product by ID", error.message);
     return res
@@ -56,34 +57,40 @@ const getProductById = async (req, res) => {
 const createNewProduct = async (req, res) => {
   try {
     // create a new Product
-    const { productName, price, stock, categoryId, tagIds } = req.body;
-
-    if (productName && price && stock && categoryId) {
-      await Product.create({ productName, price, stock, categoryId, tagIds })
-        .then((product) => {
-          // if there's product tags, we need to create pairings to bulk create in the ProductTag model
-          if (tagIds.length) {
-            const productTagIdArr = tagIds.map((tagId) => {
-              return {
-                productId: product.id,
-                tagId,
-              };
-            });
-
-            return ProductTag.bulkCreate(productTagIdArr);
-          }
-          // if no product tags, just respond
-          res.status(200).json(product);
-        })
-        .then((productTagIds) => res.status(200).json(productTagIds));
-
-      return res.json({ success: true, data: "Created Product" });
+    if (!isValidProduct(req.body)) {
+      return res.status(400).json({
+        success: false,
+        error: "Please read the documentation to find the required fields",
+      });
     }
+    const { productName, price, stock, categoryId, tagIds } = req.body;
+    const newProduct = {
+      productName,
+      price,
+      stock,
+      categoryId,
+      tagIds,
+    };
 
-    return res.status(400).json({
-      success: false,
-      error: "Please read the documentation to find the required fields",
-    });
+    await Product.create(newProduct)
+      .then((product) => {
+        // if there's product tags, we need to create pairings to bulk create in the ProductTag model
+        if (tagIds.length) {
+          const productTagIdArr = tagIds.map((tagId) => {
+            return {
+              productId: product.id,
+              tagId,
+            };
+          });
+
+          return ProductTag.bulkCreate(productTagIdArr);
+        }
+        // if no product tags, just respond
+        return res.json({ product, success: true, data: "Created Product" });
+      })
+      .then((productTagIds) =>
+        res.json({ productTagIds, success: true, data: "Created Product tags" })
+      );
   } catch (error) {
     logError("POST Product", error.message);
     return res
@@ -92,46 +99,58 @@ const createNewProduct = async (req, res) => {
   }
 };
 
-const updateProductById = (req, res) => {
-  res.send("updateProductById");
-  // update product data
-  Product.update(req.body, {
-    where: {
-      id: req.params.id,
-    },
-  })
-    .then((product) => {
-      // find all associated tags from ProductTag
-      return ProductTag.findAll({ where: { product_id: req.params.id } });
-    })
-    .then((productTags) => {
-      // get list of current tag_ids
-      const productTagIds = productTags.map(({ tag_id }) => tag_id);
-      // create filtered list of new tag_ids
-      const newProductTags = req.body.tagIds
-        .filter((tag_id) => !productTagIds.includes(tag_id))
-        .map((tag_id) => {
-          return {
-            product_id: req.params.id,
-            tag_id,
-          };
-        });
-      // figure out which ones to remove
-      const productTagsToRemove = productTags
-        .filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
-        .map(({ id }) => id);
+const updateProductById = async (req, res) => {
+  try {
+    // update product data
+    if (!isValidUpdate(req.body)) {
+      return res.status(400).json({
+        success: false,
+        error: "Please read the documentation to find the required fields",
+      });
+    }
 
-      // run both actions
-      return Promise.all([
-        ProductTag.destroy({ where: { id: productTagsToRemove } }),
-        ProductTag.bulkCreate(newProductTags),
-      ]);
+    data = await Product.update(req.body, {
+      where: {
+        id: req.params.id,
+      },
     })
-    .then((updatedProductTags) => res.json(updatedProductTags))
-    .catch((err) => {
-      // console.log(err);
-      res.status(400).json(err);
-    });
+      .then((product) => {
+        // find all associated tags from ProductTag
+        return ProductTag.findAll({ where: { productId: req.params.id } });
+      })
+      .then((productTags) => {
+        // get list of current tag_ids
+        const productTagIds = productTags.map(({ tagId }) => tagId);
+        // create filtered list of new tag_ids
+        const newProductTags = req.body.tagIds
+          .filter((tagId) => !productTagIds.includes(tagId))
+          .map((tagId) => {
+            return {
+              productId: req.params.id,
+              tagId,
+            };
+          });
+        // figure out which ones to remove
+        const productTagsToRemove = productTags
+          .filter(({ tagId }) => !req.body.tagIds.includes(tagId))
+          .map(({ id }) => id);
+
+        // run both actions
+        return Promise.all([
+          ProductTag.destroy({ where: { id: productTagsToRemove } }),
+          ProductTag.bulkCreate(newProductTags),
+        ]);
+      })
+
+      .then((updatedProductTags) =>
+        res.json({ success: true, data: "Updated Tag", updatedProductTags })
+      );
+  } catch (error) {
+    logError("  UPDATE Product", error.message);
+    return res
+      .status(500)
+      .json({ success: false, error: "Failed to send response" });
+  }
 };
 
 const deleteProductById = async (req, res) => {

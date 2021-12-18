@@ -31,7 +31,6 @@ const getCategoryById = async (req, res) => {
         },
       ],
     });
-
     if (data) {
       return res.json({ success: true, data });
     }
@@ -68,15 +67,28 @@ const createNewCategory = async (req, res) => {
   }
 };
 
-const updateCategoryById = (req, res) => {
+const updateCategoryById = async (req, res) => {
   try {
+    // update a category by its `id` value
+    const data = await Category.update(req.body, {
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (!data[0]) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Please provide a new Category name" });
+    }
+
+    return res.json({ success: true, data: "Updated Category" });
   } catch (error) {
     logError("PUT Category", error.message);
     return res
       .status(500)
       .json({ success: false, error: "Failed to send response" });
   }
-  // update a category by its `id` value
 };
 
 const deleteCategoryById = async (req, res) => {
@@ -87,7 +99,6 @@ const deleteCategoryById = async (req, res) => {
         id: req.params.id,
       },
     });
-
     if (data) {
       return res.json({ success: true, data: "Deleted Category" });
     }

@@ -68,9 +68,28 @@ const createNewTag = async (req, res) => {
   }
 };
 
-const updateTagById = (req, res) => {
-  res.send("updateTagById");
-  // update a tag's name by its `id` value
+const updateTagById = async (req, res) => {
+  try {
+    // update on tag by its `id` value
+    const data = await Tag.update(req.body, {
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (!data[0]) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Tag does not exist" });
+    }
+
+    return res.json({ success: true, data: "Updated Tag" });
+  } catch (error) {
+    logError("  UPDATE Tag", error.message);
+    return res
+      .status(500)
+      .json({ success: false, error: "Failed to send response" });
+  }
 };
 
 const deleteTagById = async (req, res) => {
