@@ -99,7 +99,7 @@ const deleteCategoryById = async (req, res) => {
         id: req.params.id,
       },
     });
-    console.log(data);
+
     if (!data) {
       return res
         .status(404)
