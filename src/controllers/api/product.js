@@ -55,46 +55,45 @@ const getProductById = async (req, res) => {
 };
 
 const createNewProduct = async (req, res) => {
-  try {
-    // create a new Product
-    if (!isValidProduct(req.body)) {
-      return res.status(400).json({
-        success: false,
-        error: "Please read the documentation to find the required fields",
-      });
-    }
-    const { productName, price, stock, categoryId, tagIds } = req.body;
-    const newProduct = {
-      productName,
-      price,
-      stock,
-      categoryId,
-      tagIds,
-    };
-
-    await Product.create(newProduct)
-      .then((product) => {
-        // if there's product tags, we need to create pairings to bulk create in the ProductTag model
-        if (tagIds.length) {
-          const productTagIdArr = tagIds.map((tagId) => {
-            return {
-              productId: product.id,
-              tagId,
-            };
-          });
-
-          return ProductTag.bulkCreate(productTagIdArr);
-        }
-        // if no product tags, just respond
-        res.json({ product, success: true, data: "Created Product" });
-      })
-      .then((productTagIds) => res.json({ productTagIds }));
-  } catch (error) {
-    logError("POST Product", error.message);
-    return res
-      .status(500)
-      .json({ success: false, error: "Failed to send response" });
+  //try {
+  // create a new Product
+  if (!isValidProduct(req.body)) {
+    return res.status(400).json({
+      success: false,
+      error: "Please read the documentation to find the required fields",
+    });
   }
+  const { productName, price, stock, categoryId, tagIds } = req.body;
+  const newProduct = {
+    productName,
+    price,
+    stock,
+    categoryId,
+    tagIds,
+  };
+
+  Product.create(req.body)
+    .then((product) => {
+      // if there's product tags, we need to create pairings to bulk create in the ProductTag model
+      if (req.body.tagIds.length) {
+        const productTagIdArr = req.body.tagIds.map((tagId) => {
+          return {
+            productId: product.id,
+            tagId,
+          };
+        });
+        return ProductTag.bulkCreate(productTagIdArr);
+      }
+      // if no product tags, just respond
+      res.status(200).json(product);
+    })
+    .then((productTagIds) => res.status(200).json(productTagIds))
+    .catch((error) => {
+      logError("POST Product", error.message);
+      res
+        .status(500)
+        .json({ success: false, error: "Failed to send response" });
+    });
 };
 
 const updateProductById = async (req, res) => {
