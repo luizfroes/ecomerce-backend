@@ -54,8 +54,7 @@ const getProductById = async (req, res) => {
   }
 };
 
-const createNewProduct = async (req, res) => {
-  //try {
+const createNewProduct = (req, res) => {
   // create a new Product
   if (!isValidProduct(req.body)) {
     return res.status(400).json({
@@ -97,57 +96,80 @@ const createNewProduct = async (req, res) => {
 };
 
 const updateProductById = async (req, res) => {
-  try {
-    // update product data
-    if (!isValidUpdate(req.body)) {
-      return res.status(400).json({
-        success: false,
-        error: "Please read the documentation to find the required fields",
-      });
-    }
+  // update product data
+  const { id } = req.params;
 
-    data = await Product.update(req.body, {
-      where: {
-        id: req.params.id,
-      },
-    })
-      .then((product) => {
-        // find all associated tags from ProductTag
-        return ProductTag.findAll({ where: { productId: req.params.id } });
-      })
-      .then((productTags) => {
-        // get list of current tag_ids
-        const productTagIds = productTags.map(({ tagId }) => tagId);
-        // create filtered list of new tag_ids
-        const newProductTags = req.body.tagIds
-          .filter((tagId) => !productTagIds.includes(tagId))
-          .map((tagId) => {
-            return {
-              productId: req.params.id,
-              tagId,
-            };
-          });
-        // figure out which ones to remove
-        const productTagsToRemove = productTags
-          .filter(({ tagId }) => !req.body.tagIds.includes(tagId))
-          .map(({ id }) => id);
+  const payload = req.body;
 
-        // run both actions
-        return Promise.all([
-          ProductTag.destroy({ where: { id: productTagsToRemove } }),
-          ProductTag.bulkCreate(newProductTags),
-        ]);
-      })
-
-      .then((updatedProductTags) =>
-        res.json({ success: true, data: "Updated Tag", updatedProductTags })
-      );
-  } catch (error) {
-    logError("  UPDATE Product", error.message);
-    return res
-      .status(500)
-      .json({ success: false, error: "Failed to send response" });
+  if (!isValidUpdate(payload)) {
+    return res.status(400).json({
+      success: false,
+      error: "Please read the documentation to find the required fields",
+    });
   }
+
+  const products = await Product.findAll({
+    attributes: ["id"],
+    raw: true,
+  });
+
+  const productsIndex = products.findIndex((product) => {
+    return product.id == id;
+  });
+
+  if (productsIndex === -1) {
+    return res.status(400).json({
+      success: false,
+      error: "Product does not exist",
+    });
+  }
+
+  Product.update(req.body, {
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then((product) => {
+      // find all associated tags from ProductTag
+      return ProductTag.findAll({ where: { productId: req.params.id } });
+    })
+    .then((productTags) => {
+      // get list of current tag_ids
+      const productTagIds = productTags.map(({ tagId }) => tagId);
+      // create filtered list of new tag_ids
+      const newProductTags = req.body.tagIds
+        .filter((tagId) => !productTagIds.includes(tagId))
+        .map((tagId) => {
+          return {
+            productId: req.params.id,
+            tagId,
+          };
+        });
+      // figure out which ones to remove
+      const productTagsToRemove = productTags
+        .filter(({ tagId }) => !req.body.tagIds.includes(tagId))
+        .map(({ id }) => id);
+
+      // run both actions
+      return Promise.all([
+        ProductTag.destroy({ where: { id: productTagsToRemove } }),
+        ProductTag.bulkCreate(newProductTags),
+      ]);
+    })
+
+    .then((updatedProductTags) =>
+      res.json({
+        success: true,
+        data: "Updated Product",
+        updatedProductTags,
+      })
+    )
+    .catch((error) => {
+      logError("  UPDATE Product", error.message);
+      return res
+        .status(500)
+        .json({ success: false, error: "Failed to send response" });
+    });
 };
 
 const deleteProductById = async (req, res) => {
