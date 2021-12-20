@@ -69,6 +69,24 @@ const createNewCategory = async (req, res) => {
 
 const updateCategoryById = async (req, res) => {
   try {
+    const { id } = req.params;
+
+    const categories = await Category.findAll({
+      attributes: ["id"],
+      raw: true,
+    });
+
+    const categoriesIndex = categories.findIndex((category) => {
+      return category.id == id;
+    });
+
+    if (categoriesIndex === -1) {
+      return res.status(400).json({
+        success: false,
+        error: "Category does not exist",
+      });
+    }
+
     // update a category by its `id` value
     const data = await Category.update(req.body, {
       where: {

@@ -70,6 +70,24 @@ const createNewTag = async (req, res) => {
 
 const updateTagById = async (req, res) => {
   try {
+    const { id } = req.params;
+
+    const tags = await Tag.findAll({
+      attributes: ["id"],
+      raw: true,
+    });
+
+    const tagsIndex = tags.findIndex((tag) => {
+      return tag.id == id;
+    });
+
+    if (tagsIndex === -1) {
+      return res.status(400).json({
+        success: false,
+        error: "Tag does not exist",
+      });
+    }
+
     // update on tag by its `id` value
     const data = await Tag.update(req.body, {
       where: {
@@ -80,7 +98,7 @@ const updateTagById = async (req, res) => {
     if (!data[0]) {
       return res
         .status(404)
-        .json({ success: false, error: "Tag does not exist" });
+        .json({ success: false, error: "Please provide a new Tag name" });
     }
 
     return res.json({ success: true, data: "Updated Tag" });
